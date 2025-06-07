@@ -1,7 +1,7 @@
 #include "HelpCommand.h"
 #include <iostream>
 
-HelpCommand::HelpCommand(Database* database, const std::vector<std::string>& args)
+HelpCommand::HelpCommand(Database*& database, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 0)
 {
 }
@@ -10,7 +10,8 @@ void HelpCommand::execute()
 {
 	std::cout << "\nAvailable commands:\n";
 	std::cout << "open <file>\n";
-	std::cout << "create\n";
+	std::cout << "create database name\n";
+	std::cout << "create table name\n";
 	std::cout << "save\n";
 	std::cout << "save as <file>\n";
 	std::cout << "close\n";

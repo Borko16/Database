@@ -1,6 +1,6 @@
 #include "OpenCommand.h"
 
-OpenCommand::OpenCommand(Database* database, const std::vector<std::string>& args)
+OpenCommand::OpenCommand(Database*& database, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 1)
 {
 }

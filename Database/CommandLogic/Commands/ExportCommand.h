@@ -4,6 +4,6 @@
 class ExportCommand : public BaseCommand
 {
 public:
-	ExportCommand(Database* database, const std::vector<std::string>& args);
+	ExportCommand(Database*& database, const std::vector<std::string>& args);
 	void execute() override;
 };

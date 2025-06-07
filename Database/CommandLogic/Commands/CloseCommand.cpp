@@ -1,6 +1,6 @@
 #include "CloseCommand.h"
 
-CloseCommand::CloseCommand(Database* database, const std::vector<std::string>& args)
+CloseCommand::CloseCommand(Database*& database, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 0)
 {
 

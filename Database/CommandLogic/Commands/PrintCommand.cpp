@@ -1,6 +1,6 @@
 #include "PrintCommand.h"
 
-PrintCommand::PrintCommand(Database* database, const std::vector<std::string>& args)
+PrintCommand::PrintCommand(Database*& database, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 2)
 {
 }

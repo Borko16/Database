@@ -1,7 +1,7 @@
 #include "BaseCommand.h"
-#include "stdexcept"
+#include <stdexcept>
 
-BaseCommand::BaseCommand(Database* database, const std::vector<std::string>& args, size_t argsNeeded)
+BaseCommand::BaseCommand(Database*& database, const std::vector<std::string>& args, size_t argsNeeded)
 	: database(database)
 {
 	setArguments(args, argsNeeded);
@@ -13,4 +13,6 @@ void BaseCommand::setArguments(const std::vector<std::string>& args, size_t args
 	{
 		throw std::invalid_argument("setArguments");
 	}
+
+	this->args = args;
 }

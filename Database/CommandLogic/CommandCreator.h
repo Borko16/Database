@@ -7,5 +7,5 @@ class BaseCommand;
 class CommandCreator
 {
 public:
-	BaseCommand* create(Database* database, const std::string& commandName, const std::vector<std::string>& args) const;
+	BaseCommand* create(Database*& database, const std::string& commandName, std::vector<std::string>& args) const;
 };

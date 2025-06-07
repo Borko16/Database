@@ -4,6 +4,6 @@
 class DeleteCommand : public BaseCommand
 {
 public:
-	DeleteCommand(Database* database, const std::vector<std::string>& args);
+	DeleteCommand(Database*& database, const std::vector<std::string>& args);
 	void execute() override;
 };

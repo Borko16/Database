@@ -4,6 +4,6 @@
 class PrintCommand : public BaseCommand
 {
 public:
-	PrintCommand(Database* database, const std::vector<std::string>& args);
+	PrintCommand(Database*& database, const std::vector<std::string>& args);
 	void execute() override;
 };

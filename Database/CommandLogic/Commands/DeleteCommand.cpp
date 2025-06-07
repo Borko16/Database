@@ -1,6 +1,6 @@
 #include "DeleteCommand.h"
 
-DeleteCommand::DeleteCommand(Database* database, const std::vector<std::string>& args)
+DeleteCommand::DeleteCommand(Database*& database, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 3)
 {
 }

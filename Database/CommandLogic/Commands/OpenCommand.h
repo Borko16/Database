@@ -5,6 +5,6 @@ class OpenCommand : public BaseCommand
 {
 
 public:
-	OpenCommand(Database* database, const std::vector<std::string>& args);
+	OpenCommand(Database*& database, const std::vector<std::string>& args);
 	void execute() override;
 };

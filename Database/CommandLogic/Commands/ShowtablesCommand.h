@@ -4,6 +4,6 @@
 class ShowtablesCommand : public BaseCommand
 {
 public:
-	ShowtablesCommand(Database* database, const std::vector<std::string>& args);
+	ShowtablesCommand(Database*& database, const std::vector<std::string>& args);
 	void execute() override;
 };

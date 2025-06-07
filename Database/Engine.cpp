@@ -1,6 +1,6 @@
 #include "Engine.h"
-#include "Database.h"
-#include "DatabaseMemento.h"
+#include "Database/Database.h"
+#include "Memento/DatabaseMemento.h"
 #include <iostream>
 #include "CommandLogic/CommandCreator.h"
 #include "CommandLogic/Commands/BaseCommand.h"
@@ -79,7 +79,10 @@ void Engine::processCommand(std::vector<std::string>& commandArgs)
 		return;
 	}
 
+	std::cout << "before: " << currentDatabase << "\n";
 	command->execute();
+	std::cout << "after: " << currentDatabase << "\n";
+	delete command;
 }
 
 Engine& Engine::getInstance()

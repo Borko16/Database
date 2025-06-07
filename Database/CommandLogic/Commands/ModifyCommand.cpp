@@ -1,6 +1,6 @@
 #include "ModifyCommand.h"
 
-ModifyCommand::ModifyCommand(Database* database, const std::vector<std::string>& args)
+ModifyCommand::ModifyCommand(Database*& database, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 3)
 {
 }

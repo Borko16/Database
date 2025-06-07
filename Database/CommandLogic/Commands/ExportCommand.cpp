@@ -1,6 +1,6 @@
 #include "ExportCommand.h"
 
-ExportCommand::ExportCommand(Database* database, const std::vector<std::string>& args)
+ExportCommand::ExportCommand(Database*& database, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 2)
 {
 }

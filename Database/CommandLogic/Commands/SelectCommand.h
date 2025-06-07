@@ -4,6 +4,6 @@
 class SelectCommand : public BaseCommand
 {
 public:
-	SelectCommand(Database* database, const std::vector<std::string>& args);
+	SelectCommand(Database*& database, const std::vector<std::string>& args);
 	void execute() override;
 };
