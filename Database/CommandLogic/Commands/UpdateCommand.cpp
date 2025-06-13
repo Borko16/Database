@@ -11,5 +11,5 @@ void UpdateCommand::execute()
 
 UpdateCommand::operator bool() const
 {
-	true;
+	return true;
 }
