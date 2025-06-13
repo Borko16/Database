@@ -6,5 +6,6 @@ class AddColumnCommand : public BaseCommand
 public:
 	AddColumnCommand(Database*& database, const std::vector<std::string>& args);
 	void execute() override;
+	operator bool() const override;
 };
 

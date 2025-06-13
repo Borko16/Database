@@ -8,3 +8,8 @@ InsertCommand::InsertCommand(Database*& database, const std::vector<std::string>
 void InsertCommand::execute()
 {
 }
+
+InsertCommand::operator bool() const
+{
+	return true;
+}

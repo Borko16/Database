@@ -8,3 +8,8 @@ DeleteCommand::DeleteCommand(Database*& database, const std::vector<std::string>
 void DeleteCommand::execute()
 {
 }
+
+DeleteCommand::operator bool() const
+{
+	return true;
+}

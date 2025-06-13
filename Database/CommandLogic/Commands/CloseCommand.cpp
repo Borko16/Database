@@ -9,3 +9,8 @@ CloseCommand::CloseCommand(Database*& database, const std::vector<std::string>& 
 void CloseCommand::execute()
 {
 }
+
+bool CloseCommand::shouldAskToSave() const
+{
+	return true;
+}

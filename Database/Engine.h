@@ -22,4 +22,5 @@ private:
 	Database* currentDatabase = nullptr;
 	DatabaseMemento* lastSaved = nullptr;
 	std::string currentFilePath;
+	bool hasUnsavedChanges = false;
 };

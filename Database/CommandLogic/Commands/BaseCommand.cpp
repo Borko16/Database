@@ -16,3 +16,18 @@ void BaseCommand::setArguments(const std::vector<std::string>& args, size_t args
 
 	this->args = args;
 }
+
+BaseCommand::operator bool() const
+{
+	return false;
+}
+
+bool BaseCommand::requiresSnapshot() const
+{
+	return false;
+}
+
+bool BaseCommand::shouldAskToSave() const
+{
+	return false;
+}

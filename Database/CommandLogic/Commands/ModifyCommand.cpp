@@ -8,3 +8,8 @@ ModifyCommand::ModifyCommand(Database*& database, const std::vector<std::string>
 void ModifyCommand::execute()
 {
 }
+
+ModifyCommand::operator bool() const
+{
+	return true;
+}

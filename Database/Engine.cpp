@@ -71,18 +71,44 @@ void Engine::processCommand(std::vector<std::string>& commandArgs)
 
 	CommandCreator factory;
 
-	BaseCommand* command = factory.create(currentDatabase, first, commandArgs);
-
-	if (!command)
+	try
 	{
-		std::cout << "\n[ERROR] Unknown command or invalid arguments.\n";
-		return;
+		BaseCommand* command = factory.create(currentDatabase, first, commandArgs);
+
+		if (!command)
+		{
+			std::cout << "\n[ERROR] Unknown command or invalid arguments.\n";
+			return;
+		}
+
+		if (hasUnsavedChanges && command->shouldAskToSave())
+		{
+			//
+		}
+
+		command->execute();
+
+		if (command)
+		{
+			hasUnsavedChanges = true;
+
+			if (command->requiresSnapshot())
+			{
+				delete lastSaved;
+				lastSaved = new DatabaseMemento(*currentDatabase);
+				hasUnsavedChanges = false;
+			}
+		}
+
+		delete command;
+	}
+	catch (...)
+	{
+		//
+
 	}
 
-	std::cout << "before: " << currentDatabase << "\n";
-	command->execute();
-	std::cout << "after: " << currentDatabase << "\n";
-	delete command;
+	
 }
 
 Engine& Engine::getInstance()
@@ -107,6 +133,7 @@ void Engine::run()
 		std::getline(std::cin, input, ';');
 	}
 
+	// тук трябва да питам дали иска да запази промените човека 
 }
 
 Engine::~Engine()

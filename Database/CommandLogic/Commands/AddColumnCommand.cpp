@@ -19,3 +19,8 @@ void AddColumnCommand::execute()
 	const std::string type = args[2];
 	database->addColumn(table, column, type);
 }
+
+AddColumnCommand::operator bool() const
+{
+	return true;
+}

@@ -17,3 +17,8 @@ void CreateTableCommand::execute()
 	database->addTable(args[0]);
 	
 }
+
+CreateTableCommand::operator bool() const
+{
+	return true;
+}

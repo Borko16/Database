@@ -8,3 +8,8 @@ UpdateCommand::UpdateCommand(Database*& database, const std::vector<std::string>
 void UpdateCommand::execute()
 {
 }
+
+UpdateCommand::operator bool() const
+{
+	true;
+}

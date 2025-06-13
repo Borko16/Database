@@ -8,3 +8,13 @@ SaveCommand::SaveCommand(Database*& database, const std::vector<std::string>& ar
 void SaveCommand::execute()
 {
 }
+
+SaveCommand::operator bool() const
+{
+	return true;
+}
+
+bool SaveCommand::requiresSnapshot() const
+{
+	return true;
+}
