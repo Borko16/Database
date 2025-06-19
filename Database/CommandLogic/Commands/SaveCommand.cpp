@@ -1,20 +1,28 @@
 #include "SaveCommand.h"
+#include "../../Memento/DatabaseMemento.h"
 
-SaveCommand::SaveCommand(Database*& database, const std::vector<std::string>& args)
-	: BaseCommand(database, args, 0)
+SaveCommand::SaveCommand(Database*& database, DatabaseMemento*& memento, const std::string& filePath, bool& hasUnsavedChanges, const std::vector<std::string>& args)
+	: BaseCommand(database, args, 0), memento(memento), filePath(filePath), hasUnsavedChanges(hasUnsavedChanges)
 {
 }
 
 void SaveCommand::execute()
 {
-}
+	if (!database)
+	{
+		std::cout << "No database is open";
+		return;
+	}
 
-SaveCommand::operator bool() const
-{
-	return true;
-}
+	database->saveToFile(filePath);
+	{
+		std::cout << "The file could not be saved.";
+		return;
+	}
 
-bool SaveCommand::requiresSnapshot() const
-{
-	return true;
+	delete memento;
+	memento = new DatabaseMemento(*database);
+
+	hasUnsavedChanges = false;
+	std::cout << "Successfully saved file: " << filePath << "\n";
 }

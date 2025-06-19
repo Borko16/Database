@@ -1,12 +1,15 @@
 #pragma once
 #include "BaseCommand.h"
+class DatabaseMemento;
 
 class SaveAsCommand : public BaseCommand
 {
+private:
+	DatabaseMemento*& memento;
+	std::string& filePath;
+	bool& hasUnsavedChanges;
+
 public:
-	SaveAsCommand(Database*& database, const std::vector<std::string>& args);
+	SaveAsCommand(Database*& database, DatabaseMemento*& memento, std::string& filePath, bool& hasUnsavedChanges, const std::vector<std::string>& args);
 	void execute() override;
-	operator bool() const override;
-	bool requiresSnapshot() const override;
-	virtual bool shouldAskToSave() const;
 };

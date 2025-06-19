@@ -1,17 +1,21 @@
 #include "CreateDBCommand.h"
-#include "../../Database/Database.h"
-#include <iostream> // временно
-CreateDBCommand::CreateDBCommand(Database*& database, const std::vector<std::string>& args)
-	: BaseCommand(database, args, 1)
+#include <iostream>
+
+CreateDBCommand::CreateDBCommand(Database*& database, bool& hasUnsavedChanges,const std::vector<std::string>& args)
+	: BaseCommand(database, args, 1), hasUnsavedChanges(hasUnsavedChanges)
 {
 }
 
-void CreateDBCommand::execute() // в момента прав€ само една база с една таблица. ј би тр€бвало да мога да прав€ повече от една таблици
+void CreateDBCommand::execute()
 {
 	if (!database)
 	{
-
 		database = new Database(args[0]);
-		std::cout << "successfully created\n";
+		std::cout << database->getName() << "was successfully created\n";
+		hasUnsavedChanges = true;
+		return;
 	}
+
+	std::cout << "You already have a database. You can't have a two or more at the same time\n";
+
 }

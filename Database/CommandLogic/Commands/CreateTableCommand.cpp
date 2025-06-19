@@ -2,8 +2,9 @@
 #include "../../Database/Database.h"
 #include <stdexcept>
 
-CreateTableCommand::CreateTableCommand(Database*& database, const std::vector<std::string>& args)
-	: BaseCommand(database, args, 1)
+
+CreateTableCommand::CreateTableCommand(Database*& database, bool& hasUnsavedChanges, const std::vector<std::string>& args)
+	: BaseCommand(database, args, 1), hasUnsavedChanges(hasUnsavedChanges)
 {
 }
 
@@ -11,14 +12,15 @@ void CreateTableCommand::execute()
 {
 	if (!database)
 	{
-		throw std::logic_error("createTableCommand execute database is nullptr");
+		std::cout << "No database is open";
+		return;
 	}
 
-	database->addTable(args[0]);
-	
-}
+	database->createTable(args[0]);
+	{
+		std::cout << "Table was not created\n";
+		return;
+	}
+	std::cout << "Table was created\n";
 
-CreateTableCommand::operator bool() const
-{
-	return true;
 }

@@ -3,9 +3,11 @@
 
 class CreateTableCommand : public BaseCommand
 {
+private:
+	bool& hasUnsavedChanges;
+
 public:
-	CreateTableCommand(Database*& database, const std::vector<std::string>& args);
+	CreateTableCommand(Database*& database, bool& hasUnsavedChanges, const std::vector<std::string>& args);
 	void execute() override;
-	operator bool() const override;
 };
 

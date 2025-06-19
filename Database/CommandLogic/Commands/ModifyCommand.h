@@ -3,8 +3,10 @@
 
 class ModifyCommand : public BaseCommand
 {
+private:
+	bool& hasUnsavedChanges;
+
 public:
-	ModifyCommand(Database*& database, const std::vector<std::string>& args);
+	ModifyCommand(Database*& database, bool& hasUnsavedChanges, const std::vector<std::string>& args);
 	void execute() override;
-	operator bool() const override;
 };

@@ -1,13 +1,12 @@
-#include "IntColumn.h"
-#include <stdexcept>
+#include "DoubleColumn.h"
 #include "../Utils/PrintUtils.h"
 
-IntColumn::IntColumn(const std::string& name, Table* table)
+DoubleColumn::DoubleColumn(const std::string& name, Table* table)
 	: Column(name, table)
 {
 }
 
-void IntColumn::resize(size_t newSize)
+void DoubleColumn::resize(size_t newSize)
 {
 	size_t oldSize = getSize();
 	values.resize(newSize);
@@ -19,34 +18,34 @@ void IntColumn::resize(size_t newSize)
 	}
 }
 
-std::string IntColumn::getType() const
+std::string DoubleColumn::getType() const
 {
-	return "int";
+	return "double";
 }
 
-bool IntColumn::matchingValues(size_t index, const std::string& value) const
+bool DoubleColumn::matchingValues(size_t index, const std::string& value) const
 {
-	try 
+	try
 	{
-		int target = tryParseValue(value);
+		double target = tryParseValue(value);
 		return values[index] == target;
 	}
-	catch (...) 
+	catch (...)
 	{
 		return false;
 	}
 }
 
-void IntColumn::updateValue(size_t index, const std::string& newValue)
+void DoubleColumn::updateValue(size_t index, const std::string& newValue)
 {
 	if (!updateIfNull(index, newValue))
 	{
-		int parsed = tryParseValue(newValue);
+		double parsed = tryParseValue(newValue);
 		setValue(index, parsed);
 	}
 }
 
-void IntColumn::printValueAt(size_t index) const
+void DoubleColumn::printValueAt(size_t index) const
 {
 	if (isCellNull(index))
 	{
@@ -58,7 +57,7 @@ void IntColumn::printValueAt(size_t index) const
 	}
 }
 
-void IntColumn::printValueAt(size_t index, std::ofstream& ofs) const
+void DoubleColumn::printValueAt(size_t index, std::ofstream& ofs) const
 {
 	if (isCellNull(index))
 	{
@@ -70,18 +69,18 @@ void IntColumn::printValueAt(size_t index, std::ofstream& ofs) const
 	}
 }
 
-bool IntColumn::modify(const Column& source, size_t index)
+bool DoubleColumn::modify(const Column& source, size_t index)
 {
 	std::string value = source.getAsString(index);
 
-	if (updateIfNull(index, value))
+	if (!updateIfNull(index, value))
 	{
 		return true;
 	}
 
 	try
 	{
-		int parsed = tryParseValue(value);
+		double parsed = tryParseValue(value);
 		setValue(index, parsed);
 		return true;
 	}
@@ -92,13 +91,13 @@ bool IntColumn::modify(const Column& source, size_t index)
 	}
 }
 
-void IntColumn::remove(size_t index)
+void DoubleColumn::remove(size_t index)
 {
 	values.erase(values.begin() + index);
 	isNULL.erase(isNULL.begin() + index);
 }
 
-void IntColumn::insert(const std::string& value)
+void DoubleColumn::insert(const std::string& value)
 {
 	size_t index = getSize();
 	resize(index + 1);
@@ -109,26 +108,26 @@ void IntColumn::insert(const std::string& value)
 		return;
 	}
 
-	int parsed = tryParseValue(value);
+	double parsed = tryParseValue(value);
 	setValue(index, parsed);
 }
 
-void IntColumn::saveToFile(std::ofstream& ofs) const
+void DoubleColumn::saveToFile(std::ofstream& ofs) const
 {
-	int type = static_cast<int>(ColumnType::INT);
+	int type = static_cast<int>(ColumnType::DOUBLE);
 	ofs.write(reinterpret_cast<const char*>(&type), sizeof(int));
 
 	saveNameAndSize(ofs);
 
 	for (size_t i = 0; i < getSize(); ++i)
 	{
-		ofs.write(reinterpret_cast<const char*>(&values[i]), sizeof(int));
+		ofs.write(reinterpret_cast<const char*>(&values[i]), sizeof(double));
 	}
 
 	saveNullFlags(ofs);
 }
 
-void IntColumn::loadFromFile(std::ifstream& ifs)
+void DoubleColumn::loadFromFile(std::ifstream& ifs)
 {
 	loadNameAndSize(ifs);
 
@@ -140,7 +139,7 @@ void IntColumn::loadFromFile(std::ifstream& ifs)
 	loadNullFlags(ifs);
 }
 
-void IntColumn::exportCell(std::ofstream& ofs, size_t index) const
+void DoubleColumn::exportCell(std::ofstream& ofs, size_t index) const
 {
 	if (isCellNull(index))
 	{
@@ -152,7 +151,7 @@ void IntColumn::exportCell(std::ofstream& ofs, size_t index) const
 	}
 }
 
-std::string IntColumn::getAsString(size_t index) const
+std::string DoubleColumn::getAsString(size_t index) const
 {
 	if (isNULL[index])
 		return "NULL";
@@ -160,19 +159,19 @@ std::string IntColumn::getAsString(size_t index) const
 	return std::to_string(values[index]);
 }
 
-int IntColumn::tryParseValue(const std::string& value) const
+double DoubleColumn::tryParseValue(const std::string& value) const
 {
-	return std::stoi(value);
+	return std::stod(value);
 }
 
-void IntColumn::setValue(size_t index, int value)
+void DoubleColumn::setValue(size_t index, double value)
 {
 	values[index] = value;
 	isNULL[index] = false;
 }
 
-void IntColumn::setNull(size_t index)
+void DoubleColumn::setNull(size_t index)
 {
-	values[index] = 0;
+	values[index] = 0.0;
 	isNULL[index] = true;
 }

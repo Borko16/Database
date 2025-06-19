@@ -3,8 +3,10 @@
 
 class InsertCommand : public BaseCommand
 {
+private:
+	bool& hasUnsavedChanges;
+
 public:
-	InsertCommand(Database*& database, const std::vector<std::string>& args);
+	InsertCommand(Database*& database, bool& hasUnsavedChanges, const std::vector<std::string>& args);
 	void execute() override;
-	operator bool() const override;
 };

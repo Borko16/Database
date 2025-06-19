@@ -73,31 +73,12 @@ void Engine::processCommand(std::vector<std::string>& commandArgs)
 
 	try
 	{
-		BaseCommand* command = factory.create(currentDatabase, first, commandArgs);
+		BaseCommand* command = factory.create(currentDatabase, lastSaved, currentFilePath, hasUnsavedChanges, first, commandArgs);
 
 		if (!command)
 		{
 			std::cout << "\n[ERROR] Unknown command or invalid arguments.\n";
 			return;
-		}
-
-		if (hasUnsavedChanges && command->shouldAskToSave())
-		{
-			//
-		}
-
-		command->execute();
-
-		if (command)
-		{
-			hasUnsavedChanges = true;
-
-			if (command->requiresSnapshot())
-			{
-				delete lastSaved;
-				lastSaved = new DatabaseMemento(*currentDatabase);
-				hasUnsavedChanges = false;
-			}
 		}
 
 		delete command;
@@ -107,8 +88,6 @@ void Engine::processCommand(std::vector<std::string>& commandArgs)
 		//
 
 	}
-
-	
 }
 
 Engine& Engine::getInstance()
@@ -116,6 +95,7 @@ Engine& Engine::getInstance()
 	static Engine engine;
 	return engine;
 }
+
 void Engine::run()
 {
 	std::cout << "Welcome to dbProject\n";

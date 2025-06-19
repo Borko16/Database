@@ -2,6 +2,7 @@
 #include "../Database/Database.h"
 #include "Commands/BaseCommand.h"
 #include "Commands/CreateDBCommand.h"
+#include "Commands/OpenCommand.h"
 #include "Commands/CreateTableCommand.h"
 #include "Commands/HelpCommand.h"
 #include "Commands/CloseCommand.h"
@@ -17,13 +18,15 @@
 #include "Commands/SelectCommand.h"
 #include "Commands/ShowtablesCommand.h"
 #include "Commands/UpdateCommand.h"
-BaseCommand* CommandCreator::create(Database*& database, const std::string& commandName, std::vector<std::string>& args) const
+
+BaseCommand* CommandCreator::create(Database*& database, DatabaseMemento*& memento,
+	std::string& filePath, bool& hasUnsavedChanges, const std::string& commandName, std::vector<std::string>& args) const
 {
 
 	BaseCommand* result = nullptr;
 	if (commandName == "close")
 	{
-		result = new CloseCommand(database, args);
+		result = new CloseCommand(database, filePath, hasUnsavedChanges, args);
 	}
 	else if (commandName == "help")
 	{
@@ -35,13 +38,13 @@ BaseCommand* CommandCreator::create(Database*& database, const std::string& comm
 		{
 			std::string first = args.front();
 			args.erase(args.begin());
-			result = new CreateDBCommand(database, args);
+			result = new CreateDBCommand(database, hasUnsavedChanges, args);
 		}
 		else if(args[0] == "table")
 		{
 			std::string first = args.front();
 			args.erase(args.begin());
-			result = new CreateTableCommand(database, args);
+			result = new CreateTableCommand(database, hasUnsavedChanges,args);
 		}
 	}
 	else if (commandName == "save")
@@ -50,10 +53,10 @@ BaseCommand* CommandCreator::create(Database*& database, const std::string& comm
 		{
 			std::string first = args.front();
 			args.erase(args.begin());
-			result = new SaveAsCommand(database, args);
+			result = new SaveAsCommand(database, memento, filePath, hasUnsavedChanges, args);
 		}
 
-		result = new SaveCommand(database, args);
+		result = new SaveCommand(database, memento, filePath, hasUnsavedChanges, args);
 	}
 	else if (commandName == "showtables")
 	{
@@ -77,15 +80,15 @@ BaseCommand* CommandCreator::create(Database*& database, const std::string& comm
 	}
 	else if (commandName == "modify")
 	{
-		result = new ModifyCommand(database, args);
+		result = new ModifyCommand(database, hasUnsavedChanges, args);
 	}
 	else if (commandName == "addcolumn")
 	{
-		result = new AddColumnCommand(database, args);
+		result = new AddColumnCommand(database, hasUnsavedChanges,args);
 	}
 	else if (commandName == "update")
 	{
-		result = new UpdateCommand(database, args);
+		result = new UpdateCommand(database, hasUnsavedChanges,args);
 	}
 	else if (commandName == "delete")
 	{
@@ -93,7 +96,11 @@ BaseCommand* CommandCreator::create(Database*& database, const std::string& comm
 	}
 	else if (commandName == "insert")
 	{
-		result = new InsertCommand(database, args);
+		result = new InsertCommand(database, hasUnsavedChanges,args);
+	}
+	else if (commandName == "open")
+	{
+		result = new OpenCommand(database, memento, filePath, hasUnsavedChanges, args);
 	}
 	else
 	{

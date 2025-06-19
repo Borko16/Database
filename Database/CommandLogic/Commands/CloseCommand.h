@@ -3,8 +3,10 @@
 
 class CloseCommand : public BaseCommand
 {
+private:
+	const std::string& filePath;
+	bool& hasUnsavedChanges;
 public:
-	CloseCommand(Database*& database, const std::vector<std::string>& args);
+	CloseCommand(Database*& database, const std::string& filePath, bool& hasUnsavedChanges, const std::vector<std::string>& args);
 	void execute() override;
-	virtual bool shouldAskToSave() const override;
 };
