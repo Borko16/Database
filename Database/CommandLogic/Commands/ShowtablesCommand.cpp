@@ -7,11 +7,7 @@ ShowtablesCommand::ShowtablesCommand(Database*& database, const std::vector<std:
 
 void ShowtablesCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open";
-		return;
-	}
+	if (!validateDatabase()) return;
 
 	database->showTables();
 }

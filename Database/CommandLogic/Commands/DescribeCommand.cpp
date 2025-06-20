@@ -7,11 +7,7 @@ DescribeCommand::DescribeCommand(Database*& database, const std::vector<std::str
 
 void DescribeCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open";
-		return;
-	}
+	if (!validateDatabase()) return;
 
 	const std::string table = args[0];
 	database->describe(table);

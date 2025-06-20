@@ -7,21 +7,12 @@ InsertCommand::InsertCommand(Database*& database, bool& hasUnsavedChanges, const
 
 void InsertCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open";
-		return;
-	}
-
+	if (!validateDatabase()) return;
 	const std::string table = args[0];
 	args.erase(args.begin());
 
-	database->insert(table, args);
+	if (database->insert(table, args))
 	{
-		std::cout << "Column was not added\n";
-		return;
+		hasUnsavedChanges = true;
 	}
-	
-	hasUnsavedChanges = true;
-	std::cout << "Row was added\n";
 }

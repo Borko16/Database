@@ -1,6 +1,7 @@
 #include "AddColumnCommand.h"
 #include "../../Database/Database.h"
 #include <stdexcept>
+#include "../../Utils/StringUtils.h"
 
 AddColumnCommand::AddColumnCommand(Database*& database, bool& hasUnsavedChanges, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 3), hasUnsavedChanges(hasUnsavedChanges)
@@ -9,22 +10,14 @@ AddColumnCommand::AddColumnCommand(Database*& database, bool& hasUnsavedChanges,
 
 void AddColumnCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open";
-		return;
-	}
+	if (!validateDatabase()) return;
 
 	const std::string table = args[0];
 	const std::string column = args[1];
-	const std::string type = args[2];
-	
-	database->addColumn(table, column, type);
-	{
-		std::cout << "Column was not added\n";
-		return;
-	}
+	const std::string type = toLowerString(args[2]);
 
-	hasUnsavedChanges = true;
-	std::cout << "Column was added\n";
+	if (database->addColumn(table, column, type))
+	{
+		hasUnsavedChanges = true;
+	}
 }

@@ -7,15 +7,10 @@ SelectCommand::SelectCommand(Database*& database, const std::vector<std::string>
 
 void SelectCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open";
-		return;
-	}
+	if (!validateDatabase()) return;
 
 	const std::string& column = args[0];
 	const std::string& value = args[1];
 	const std::string& table = args[2];
-
 	database->select(column, value, table);
 }

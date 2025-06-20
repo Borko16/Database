@@ -151,6 +151,11 @@ void DoubleColumn::exportCell(std::ofstream& ofs, size_t index) const
 	}
 }
 
+DoubleColumn* DoubleColumn::clone() const
+{
+	return new DoubleColumn(*this);
+}
+
 std::string DoubleColumn::getAsString(size_t index) const
 {
 	if (isNULL[index])

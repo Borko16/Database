@@ -194,6 +194,11 @@ void StringColumn::exportCell(std::ofstream& ofs, size_t index) const
 	}
 }
 
+StringColumn* StringColumn::clone() const
+{
+	return new StringColumn(*this);
+}
+
 std::string StringColumn::getAsString(size_t index) const
 {
 	if (isNULL[index])

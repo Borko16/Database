@@ -5,15 +5,7 @@
 #include "CommandLogic/CommandCreator.h"
 #include "CommandLogic/Commands/BaseCommand.h"
 
-char toUpper(char elem)
-{
-	int diff = 'a' - 'A';
-	if ('A' <= elem && elem <= 'Z')
-	{
-		return elem + diff;
-	}
-	return elem;
-}
+
 
 bool isDelimiter(char elem)
 {
@@ -38,7 +30,7 @@ std::vector<std::string> splitWords(std::string& command)
 	{
 		if (!isDelimiter(command[i]))
 		{
-			current += toUpper(command[i]);
+			current += command[i];
 		}
 		else
 		{

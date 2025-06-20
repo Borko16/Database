@@ -11,11 +11,10 @@ void CreateDBCommand::execute()
 	if (!database)
 	{
 		database = new Database(args[0]);
-		std::cout << database->getName() << "was successfully created\n";
+		printCreatedDB(database->getName());
 		hasUnsavedChanges = true;
 		return;
 	}
 
-	std::cout << "You already have a database. You can't have a two or more at the same time\n";
-
+	printDBAlreadyOpen();
 }

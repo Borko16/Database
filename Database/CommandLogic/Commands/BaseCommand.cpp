@@ -1,7 +1,6 @@
 #include "BaseCommand.h"
 #include <stdexcept>
 
-
 BaseCommand::BaseCommand(Database*& database, const std::vector<std::string>& args, size_t argsNeeded)
 	: database(database)
 {
@@ -16,4 +15,14 @@ void BaseCommand::setArguments(const std::vector<std::string>& args, size_t args
 	}
 
 	this->args = args;
+}
+
+bool BaseCommand::validateDatabase() const
+{
+	if (!database)
+	{
+		printValue("No database is open\n");
+		return false;
+	}
+	return true;
 }

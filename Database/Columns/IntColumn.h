@@ -18,6 +18,7 @@ public:
 	void saveToFile(std::ofstream& ofs) const override;
 	void loadFromFile(std::ifstream& ifs) override;
 	void exportCell(std::ofstream& ofs, size_t index) const override;
+	IntColumn* clone() const override;
 private:
 	std::string getAsString(size_t index) const;
 	int tryParseValue(const std::string& value) const;

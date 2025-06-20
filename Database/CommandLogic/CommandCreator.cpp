@@ -18,38 +18,38 @@
 #include "Commands/SelectCommand.h"
 #include "Commands/ShowtablesCommand.h"
 #include "Commands/UpdateCommand.h"
+#include "../Utils/StringUtils.h"
 
 BaseCommand* CommandCreator::create(Database*& database, DatabaseMemento*& memento,
 	std::string& filePath, bool& hasUnsavedChanges, const std::string& commandName, std::vector<std::string>& args) const
 {
 
 	BaseCommand* result = nullptr;
-	if (commandName == "close")
+	const std::string name = toLowerString(commandName);
+	if (name == "close")
 	{
 		result = new CloseCommand(database, filePath, hasUnsavedChanges, args);
 	}
-	else if (commandName == "help")
+	else if (name == "help")
 	{
 		result = new HelpCommand(database, args);
 	}
-	else if (commandName == "create")
+	else if (name == "create")
 	{
-		if (args[0] == "database")
+		if (toLowerString(args[0]) == "database")
 		{
-			std::string first = args.front();
 			args.erase(args.begin());
 			result = new CreateDBCommand(database, hasUnsavedChanges, args);
 		}
-		else if(args[0] == "table")
+		else if(toLowerString(args[0]) == "table")
 		{
-			std::string first = args.front();
 			args.erase(args.begin());
 			result = new CreateTableCommand(database, hasUnsavedChanges,args);
 		}
 	}
-	else if (commandName == "save")
+	else if (name == "save")
 	{
-		if(args.size() == 1)
+		if(args.size() > 0 && toLowerString(args[0]) == "as")
 		{
 			std::string first = args.front();
 			args.erase(args.begin());
@@ -58,47 +58,47 @@ BaseCommand* CommandCreator::create(Database*& database, DatabaseMemento*& memen
 
 		result = new SaveCommand(database, memento, filePath, hasUnsavedChanges, args);
 	}
-	else if (commandName == "showtables")
+	else if (name == "showtables")
 	{
 		result = new ShowtablesCommand(database, args);
 	}
-	else if (commandName == "describe")
+	else if (name == "describe")
 	{
 		result = new DescribeCommand(database, args);
 	}
-	else if (commandName == "print")
+	else if (name == "print")
 	{
 		result = new PrintCommand(database, args);
 	}
-	else if (commandName == "export")
+	else if (name == "export")
 	{
 		result = new ExportCommand(database, args);
 	}
-	else if (commandName == "select")
+	else if (name == "select")
 	{
 		result = new SelectCommand(database, args);
 	}
-	else if (commandName == "modify")
+	else if (name == "modify")
 	{
 		result = new ModifyCommand(database, hasUnsavedChanges, args);
 	}
-	else if (commandName == "addcolumn")
+	else if (name == "addcolumn")
 	{
 		result = new AddColumnCommand(database, hasUnsavedChanges,args);
 	}
-	else if (commandName == "update")
+	else if (name == "update")
 	{
 		result = new UpdateCommand(database, hasUnsavedChanges,args);
 	}
-	else if (commandName == "delete")
+	else if (name == "delete")
 	{
-		result = new DeleteCommand(database, args);
+		result = new DeleteCommand(database, hasUnsavedChanges, args);
 	}
-	else if (commandName == "insert")
+	else if (name == "insert")
 	{
 		result = new InsertCommand(database, hasUnsavedChanges,args);
 	}
-	else if (commandName == "open")
+	else if (name == "open")
 	{
 		result = new OpenCommand(database, memento, filePath, hasUnsavedChanges, args);
 	}

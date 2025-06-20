@@ -32,6 +32,7 @@ public:
 	virtual void loadFromFile(std::ifstream& ifs) = 0;
 	virtual void exportCell(std::ofstream& ofs, size_t index) const = 0;
 	virtual std::string getAsString(size_t index) const = 0;
+	virtual Column* clone() const = 0;
 
 protected:
 	void saveNameAndSize(std::ostream& ofs) const;

@@ -7,11 +7,7 @@ UpdateCommand::UpdateCommand(Database*& database, bool& hasUnsavedChanges, const
 
 void UpdateCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open";
-		return;
-	}
+	if (!validateDatabase()) return;
 
 	const std::string& table = args[0];
 	const std::string& column = args[1];
@@ -21,10 +17,6 @@ void UpdateCommand::execute()
 
 	database->update(table, column, value, newColumn, newValue);
 	{
-		std::cout << "Update was not made\n";
-		return;
+		hasUnsavedChanges = true;
 	}
-
-	hasUnsavedChanges = true;
-	std::cout << "Update was made\n";
 }

@@ -19,6 +19,7 @@ public:
 	void saveToFile(std::ofstream& ofs) const override;
 	void loadFromFile(std::ifstream& ifs) override;
 	void exportCell(std::ofstream& ofs, size_t index) const override;
+	DateColumn* clone() const override;
 private:
 	std::string getAsString(size_t index) const;
 	const date::year_month_day& tryParseValue(const std::string& value) const;

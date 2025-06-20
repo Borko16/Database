@@ -1,6 +1,5 @@
 #include "CloseCommand.h"
-#include <iostream>
-
+#include "../../Utils/StringUtils.h"
 
 CloseCommand::CloseCommand(Database*& database, const std::string& filePath, bool& hasUnsavedChanges, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 0), filePath(filePath), hasUnsavedChanges(hasUnsavedChanges)
@@ -9,34 +8,28 @@ CloseCommand::CloseCommand(Database*& database, const std::string& filePath, boo
 
 void CloseCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open\n";
-		return;
-	}
+	if (!validateDatabase()) return;
 
 	if (database && hasUnsavedChanges)
 	{
-		std::cout << "Unsaved changes detected. Do you want to save them? (yes/no): ";
+		printUnsavedChanges();
 		std::string input;
 		std::cin >> input;
 
-		if (input == "yes")
+		if (toLowerString(input) == "yes")
 		{
-			database->saveToFile(filePath);
+			if (database->saveToFile(filePath))
 			{
-				std::cout << "The file could not be saved.";
+				hasUnsavedChanges = false;
+			}
+			else
+			{
 				return;
 			}
-			std::cout << "The file was saved.";
 		}
-
-		hasUnsavedChanges = false;
 	}
 
-	std::cout << database->getName() << " was closed\n";
-
+	printClosedDatabase(database->getName());
 	delete database;
 	database = nullptr;
-
 }

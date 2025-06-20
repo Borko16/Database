@@ -10,17 +10,10 @@ CreateTableCommand::CreateTableCommand(Database*& database, bool& hasUnsavedChan
 
 void CreateTableCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open";
-		return;
-	}
+	if (!validateDatabase()) return;
 
-	database->createTable(args[0]);
+	if (database->createTable(args[0]))
 	{
-		std::cout << "Table was not created\n";
-		return;
+		hasUnsavedChanges = true;
 	}
-	std::cout << "Table was created\n";
-
 }

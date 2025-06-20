@@ -166,6 +166,11 @@ void DateColumn::exportCell(std::ofstream& ofs, size_t index) const
 	}
 }
 
+DateColumn* DateColumn::clone() const
+{
+	return new DateColumn(*this);
+}
+
 std::string DateColumn::getAsString(size_t index) const
 {
 	if (isNULL[index])

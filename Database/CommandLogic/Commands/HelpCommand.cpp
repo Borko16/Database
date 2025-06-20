@@ -1,5 +1,4 @@
 #include "HelpCommand.h"
-#include <iostream>
 
 HelpCommand::HelpCommand(Database*& database, const std::vector<std::string>& args)
 	: BaseCommand(database, args, 0)
@@ -8,24 +7,24 @@ HelpCommand::HelpCommand(Database*& database, const std::vector<std::string>& ar
 
 void HelpCommand::execute()
 {
-	std::cout << "\nAvailable commands:\n";
-	std::cout << "open <file>\n";
-	std::cout << "create database name\n";
-	std::cout << "create table name\n";
-	std::cout << "save\n";
-	std::cout << "save as <file>\n";
-	std::cout << "close\n";
-	std::cout << "showtables\n";
-	std::cout << "describe <table>\n";
-	std::cout << "print <table> [<RPN>]\n";
-	std::cout << "export <table> <file>\n";
-	std::cout << "insert <table> <values...>\n";
-	std::cout << "delete <table> <col> <value>\n";
-	std::cout << "update <table> <col> <value> <newCol> <newValue>\n";
-	std::cout << "addcolumn <table> <col> <type>\n";
-	std::cout << "select <col> <value> <table>\n";
-	std::cout << "modify <table> <col> <type>\n";
-	std::cout << "exit\n";
-	std::cout << "help\n";
-	std::cout << "Note: Commands are case-insensitive. Use semicolon (;) to end each command.\n";
+	printValue("\nAvailable commands:\n");
+	printValue("open <file>\n");
+	printValue("create database name\n");
+	printValue("create table name\n");
+	printValue("save\n");
+	printValue("save as <file>\n");
+	printValue("close\n");
+	printValue("showtables\n");
+	printValue("describe <table>\n");
+	printValue("print <table> [<RPN>]\n");
+	printValue("export <table> <file>\n");
+	printValue("insert <table> <values...>\n");
+	printValue("delete <table> <col> <value>\n");
+	printValue("update <table> <col> <value> <newCol> <newValue>\n");
+	printValue("addcolumn <table> <col> <type>\n");
+	printValue("select <col> <value> <table>\n");
+	printValue("modify <table> <col> <type>\n");
+	printValue("exit\n");
+	printValue("help\n");
+	printValue("Note: Commands are case-insensitive. Use semicolon (;) to end each command.\n");
 }

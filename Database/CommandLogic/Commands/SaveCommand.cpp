@@ -8,21 +8,13 @@ SaveCommand::SaveCommand(Database*& database, DatabaseMemento*& memento, const s
 
 void SaveCommand::execute()
 {
-	if (!database)
+	if (!validateDatabase()) return;
+
+	if (database->saveToFile(filePath))
 	{
-		std::cout << "No database is open";
-		return;
+		delete memento;
+		memento = new DatabaseMemento(*database);
+
+		hasUnsavedChanges = false;
 	}
-
-	database->saveToFile(filePath);
-	{
-		std::cout << "The file could not be saved.";
-		return;
-	}
-
-	delete memento;
-	memento = new DatabaseMemento(*database);
-
-	hasUnsavedChanges = false;
-	std::cout << "Successfully saved file: " << filePath << "\n";
 }
