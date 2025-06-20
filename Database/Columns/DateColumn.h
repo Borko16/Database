@@ -1,7 +1,6 @@
 #pragma warning
-#include "../Utils/DateUtils.h"
-#include <vector>
 #include "Column.h"
+#include "../Utils/DateUtils.h"
 
 class DateColumn : public Column
 {
@@ -22,7 +21,7 @@ public:
 	DateColumn* clone() const override;
 private:
 	std::string getAsString(size_t index) const;
-	const date::year_month_day& tryParseValue(const std::string& value) const;
+	date::year_month_day tryParseValue(const std::string& value) const;
 	void setValue(size_t index, const date::year_month_day& value);
 	void setNull(size_t index) override;
 	std::vector<date::year_month_day> values;

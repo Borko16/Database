@@ -8,6 +8,7 @@ public:
     void resize(size_t newSize) override;
     std::string getType() const override;
     bool matchingValues(size_t index, const std::string& value) const override;
+    bool strictMatch(size_t index, const std::string& value) const override;
     void updateValue(size_t index, const std::string& newValue) override;
     void printValueAt(size_t index) const override;
     void printValueAt(size_t index, std::ofstream& ofs) const override;
@@ -20,7 +21,7 @@ public:
     StringColumn* clone() const override;
 private:
     std::string getAsString(size_t index) const override;
-    const std::string& tryParseValue(const std::string& value) const;
+    std::string tryParseValue(const std::string& value) const;
     void setNull(size_t index) override;
     void setValue(size_t index, const std::string& value);
     std::vector<std::string> values;

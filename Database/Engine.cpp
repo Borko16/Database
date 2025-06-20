@@ -1,55 +1,9 @@
 #include "Engine.h"
 #include "Database/Database.h"
 #include "Memento/DatabaseMemento.h"
-#include <iostream>
 #include "CommandLogic/CommandCreator.h"
 #include "CommandLogic/Commands/BaseCommand.h"
-
-
-
-bool isDelimiter(char elem)
-{
-	std::vector<char> tokenDelimiters = { ' ', '\t', '\n', '\r', '\f', '\v' };
-	for (size_t i = 0; i < tokenDelimiters.size(); i++)
-	{
-		if (elem == tokenDelimiters[i])
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-std::vector<std::string> splitWords(std::string& command)
-{
-	std::vector<std::string> result;
-	std::string current;
-
-	for (size_t i = 0; i < command.length(); i++)
-	{
-		if (!isDelimiter(command[i]))
-		{
-			current += command[i];
-		}
-		else
-		{
-			if (!current.empty())
-			{
-				result.push_back(current);
-				current.clear();
-			}
-		}
-	}
-
-	if (!isDelimiter(command[command.length() - 1]))
-	{
-		result.push_back(current);
-	}
-	
-
-	return result;
-}
+#include "Utils/StringUtils.h"
 
 void Engine::processCommand(std::vector<std::string>& commandArgs)
 {
@@ -62,14 +16,13 @@ void Engine::processCommand(std::vector<std::string>& commandArgs)
 	commandArgs.erase(commandArgs.begin());
 
 	CommandCreator factory;
-
 	try
 	{
 		BaseCommand* command = factory.create(currentDatabase, lastSaved, currentFilePath, hasUnsavedChanges, first, commandArgs);
 
 		if (!command)
 		{
-			std::cout << "\n[ERROR] Unknown command or invalid arguments.\n";
+			printMessage("\nUnknown command or invalid arguments.\n");
 			return;
 		}
 
@@ -77,8 +30,7 @@ void Engine::processCommand(std::vector<std::string>& commandArgs)
 	}
 	catch (...)
 	{
-		//
-
+		printMessage("\nUnexpected failure.\n");
 	}
 }
 
@@ -90,9 +42,9 @@ Engine& Engine::getInstance()
 
 void Engine::run()
 {
-	std::cout << "Welcome to dbProject\n";
-	std::cout << "Type 'help' for available commands.\n";
-	std::cout << ">";
+	printMessage("Welcome to dbProject\n");
+	printMessage("Type 'help' for available commands.\n");
+	printMessage(">");
 	std::string input;
 	std::getline(std::cin, input, ';');
 
@@ -100,12 +52,8 @@ void Engine::run()
 	{
 		std::vector<std::string> command = splitWords(input);
 		processCommand(command);
-
-
 		std::getline(std::cin, input, ';');
 	}
-
-	// тук трябва да питам дали иска да запази промените човека 
 }
 
 Engine::~Engine()

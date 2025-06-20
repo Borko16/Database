@@ -9,15 +9,13 @@ class Engine
 public:
 	static Engine& getInstance();
 	void run();
-
 	void processCommand(std::vector<std::string>& commandArgs);
+
 private:
 	Engine() = default;
-	~Engine();
-
 	Engine(const Engine&) = delete;
 	Engine& operator=(const Engine&) = delete;
-
+	~Engine();
 
 	Database* currentDatabase = nullptr;
 	DatabaseMemento* lastSaved = nullptr;

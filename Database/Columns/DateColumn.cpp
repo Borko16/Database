@@ -80,16 +80,7 @@ bool DateColumn::modify(const Column& source, size_t index)
 
 	try
 	{
-		std::istringstream in(value);
-		date::year_month_day parsed;
-		in >> date::parse("%F", parsed);
-
-		if (in.fail() || !parsed.ok())
-			throw std::invalid_argument("Invalid date");
-
-		if (parsed < date::year{ 1900 } / 1 / 1)
-			throw std::invalid_argument("Date must be >= 1900-01-01");
-
+		date::year_month_day parsed = tryParseValue(value);
 		setValue(index, parsed);
 		return true;
 	}
@@ -128,7 +119,7 @@ void DateColumn::saveToFile(std::ofstream& ofs) const
 
 	saveNameAndSize(ofs);
 
-	for (size_t i = 0; i < getSize(); ++i)
+	for (size_t i = 0; i < getSize(); i++)
 	{
 		size_t y = int(values[i].year());
 		size_t m = unsigned(values[i].month());
@@ -146,7 +137,7 @@ void DateColumn::loadFromFile(std::ifstream& ifs)
 {
 	loadNameAndSize(ifs);
 
-	for (size_t i = 0; i < getSize(); ++i)
+	for (size_t i = 0; i < getSize(); i++)
 	{
 		ifs.read(reinterpret_cast<char*>(&values[i]), sizeof(double));
 	}
@@ -173,13 +164,15 @@ DateColumn* DateColumn::clone() const
 
 std::string DateColumn::getAsString(size_t index) const
 {
-	if (isNULL[index])
-		return "NULL";
+	if (isCellNull(index))
+	{
+		return "Null";
+	}
 
 	return date::format("%F", values[index]);
 }
 
-const date::year_month_day& DateColumn::tryParseValue(const std::string& value) const
+date::year_month_day DateColumn::tryParseValue(const std::string& value) const
 {
 	std::istringstream in(value);
 	date::year_month_day parsed;

@@ -103,3 +103,13 @@ inline void printAlreadyExists(const std::string& type, std::ostream& os = std::
 {
 	os << type << " with this name already exists.\n";
 }
+
+inline void printMessage(const std::string& msg, std::ostream& os = std::cout)
+{
+	os << msg;
+}
+
+inline void printNumber(int number, std::ostream& os = std::cout)
+{
+	os << number;
+}

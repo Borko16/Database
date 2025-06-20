@@ -120,7 +120,7 @@ void IntColumn::saveToFile(std::ofstream& ofs) const
 
 	saveNameAndSize(ofs);
 
-	for (size_t i = 0; i < getSize(); ++i)
+	for (size_t i = 0; i < getSize(); i++)
 	{
 		ofs.write(reinterpret_cast<const char*>(&values[i]), sizeof(int));
 	}
@@ -132,7 +132,7 @@ void IntColumn::loadFromFile(std::ifstream& ifs)
 {
 	loadNameAndSize(ifs);
 
-	for (size_t i = 0; i < getSize(); ++i)
+	for (size_t i = 0; i < getSize(); i++)
 	{
 		ifs.read(reinterpret_cast<char*>(&values[i]), sizeof(double));
 	}
@@ -159,8 +159,10 @@ IntColumn* IntColumn::clone() const
 
 std::string IntColumn::getAsString(size_t index) const
 {
-	if (isNULL[index])
-		return "NULL";
+	if (isCellNull(index))
+	{
+		return "Null";
+	}
 
 	return std::to_string(values[index]);
 }

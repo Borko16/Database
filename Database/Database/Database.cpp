@@ -1,10 +1,7 @@
 #include "Database.h"
-#include <stdexcept>
-#include <iostream>
-#include <fstream>
 #include "../Utils/ErrorUtils.h"
 #include "../Utils/PrintUtils.h"
-
+#include "../Utils/StringUtils.h"
 
 Database::Database(const std::string& name)
 	: name(name)
@@ -111,7 +108,10 @@ void Database::exportTable(const std::string& table, const std::string& filePath
 
 bool Database::insert(const std::string& table, const std::vector<std::string>& columns)
 {
-	if (!ensureTablesExist()) return false;
+	if (!ensureTablesExist())
+	{
+		return false;
+	}
 
 	size_t index = findTableIndex(table);
 	if (index == getTablesCount())
@@ -228,7 +228,7 @@ bool Database::saveToFile(const std::string& filePath) const
 		size_t tableCount = tables.size();
 		ofs.write(reinterpret_cast<const char*>(&tableCount), sizeof(size_t));
 
-		for (size_t i = 0; i < tables.size(); ++i)
+		for (size_t i = 0; i < tables.size(); i++)
 		{
 			tables[i].saveToFile(ofs);
 		}
@@ -271,7 +271,7 @@ bool Database::loadFromFile(const std::string& filePath)
 		ifs.read(reinterpret_cast<char*>(&tableCount), sizeof(size_t));
 
 
-		for (size_t i = 0; i < tableCount; ++i)
+		for (size_t i = 0; i < tableCount; i++)
 		{
 			Table t("");
 			t.loadFromFile(ifs);
@@ -300,7 +300,7 @@ const size_t Database::findTableIndex(const std::string& table) const
 {
 	for (size_t i = 0; i < getTablesCount(); i++)
 	{
-		if (tables[i].getName() == table)
+		if (compareInsensitive(tables[i].getName(), table))
 		{
 			return i;
 		}
@@ -311,7 +311,8 @@ const size_t Database::findTableIndex(const std::string& table) const
 
 bool Database::ensureTablesExist() const
 {
-	if (getTablesCount() == 0) {
+	if (getTablesCount() == 0)
+	{
 		notFound("Table");
 		return false;
 	}
@@ -325,19 +326,19 @@ bool Database::hasCorrectExtension(const std::string& filePath, const std::strin
 		return false;
 	}
 
-	return filePath.substr(filePath.size() - expectedExt.size()) == ".dbbg";
+	return filePath.substr(filePath.size() - expectedExt.size()) == expectedExt;
 }
 
 void Database::printTables() const
 {
-	printValue("Tables: ");
-	for (size_t i = 0; i < tables.size(); ++i)
+	printMessage("Tables: ");
+	for (size_t i = 0; i < tables.size(); i++)
 	{
-		printValue(tables[i].getName());
+		printMessage(tables[i].getName());
 		if (i != getTablesCount() - 1)
 		{
-			printValue(", ");
+			printMessage(", ");
 		}
 	}
-	printValue("\n");
+	printMessage("\n");
 }

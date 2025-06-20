@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include "Column.h"
 
 class IntColumn : public Column

@@ -1,13 +1,9 @@
 #pragma once
-#include <string>
-#include <vector>
 #include "../../Database/Database.h"
-#include <iostream>
 #include "../../Utils/PrintUtils.h"
 
 class BaseCommand
 {
-
 public:
 	BaseCommand(Database*& database, const std::vector<std::string>& args, size_t argsNeeded);
 	virtual void execute() = 0;

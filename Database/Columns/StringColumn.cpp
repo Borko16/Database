@@ -1,9 +1,10 @@
 #include "StringColumn.h"
 #include <stdexcept>
 #include "../Utils/PrintUtils.h"
+#include "../Utils/StringUtils.h"
 
 StringColumn::StringColumn(const std::string& name, Table* table)
-    : Column(name, table)
+	: Column(name, table)
 {
 }
 
@@ -24,56 +25,20 @@ std::string StringColumn::getType() const
 	return "string";
 }
 
-static std::string removeQuotes(const std::string& input)
-{
-	if (input.size() >= 2 && input.front() == '"' && input.back() == '"')
-	{
-		return input.substr(1, input.size() - 2);
-	}
-	
-	throw std::invalid_argument("invalid string");
-}
-
-static std::string unescapeString(const std::string& input)
-{
-	std::string result;
-	result.reserve(input.size());
-
-	for (size_t i = 0; i < input.size(); ++i)
-	{
-		if (input[i] == '\\')
-		{
-			if (i + 1 >= input.size())
-			{
-				throw std::invalid_argument("Backslash at end of string");
-			}
-
-			char next = input[i + 1];
-			if (next == '\\')
-			{
-				result += '\\';
-			}
-			else if (next == '\"')
-			{
-				result += '\"';
-			}
-			else
-			{
-				throw std::invalid_argument("Invalid escape sequence in string");
-			}
-
-			++i;
-		}
-		else
-		{
-			result += input[i];
-		}
-	}
-
-	return result;
-}
-
 bool StringColumn::matchingValues(size_t index, const std::string& value) const
+{
+	try
+	{
+		std::string cleaned = tryParseValue(value);
+		return substringInsensitive(values[index], cleaned);
+	}
+	catch (...)
+	{
+		return false;
+	}
+}
+
+bool StringColumn::strictMatch(size_t index, const std::string& value) const
 {
 	try
 	{
@@ -123,7 +88,7 @@ bool StringColumn::modify(const Column& source, size_t index)
 {
 	std::string parsed = source.getAsString(index);
 
-	if (!updateIfNull(index, parsed))
+	if (updateIfNull(index, parsed))
 	{
 		return true;
 	}
@@ -160,7 +125,7 @@ void StringColumn::saveToFile(std::ofstream& ofs) const
 
 	saveNameAndSize(ofs);
 
-	for (size_t i = 0; i < getSize(); ++i)
+	for (size_t i = 0; i < getSize(); i++)
 	{
 		size_t strLen = values[i].size();
 		ofs.write(reinterpret_cast<const char*>(&strLen), sizeof(size_t));
@@ -174,7 +139,7 @@ void StringColumn::loadFromFile(std::ifstream& ifs)
 {
 	loadNameAndSize(ifs);
 
-	for (size_t i = 0; i < getSize(); ++i)
+	for (size_t i = 0; i < getSize(); i++)
 	{
 		ifs.read(reinterpret_cast<char*>(&values[i]), sizeof(double));
 	}
@@ -201,13 +166,15 @@ StringColumn* StringColumn::clone() const
 
 std::string StringColumn::getAsString(size_t index) const
 {
-	if (isNULL[index])
-		return "NULL";
+	if (isCellNull(index))
+	{
+		return "Null";
+	}
 
 	return values[index];
 }
 
-const std::string& StringColumn::tryParseValue(const std::string& value) const
+std::string StringColumn::tryParseValue(const std::string& value) const
 {
 	return unescapeString(removeQuotes(value));
 }

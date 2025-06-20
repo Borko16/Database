@@ -8,11 +8,7 @@ ModifyCommand::ModifyCommand(Database*& database, bool& hasUnsavedChanges, const
 
 void ModifyCommand::execute()
 {
-	if (!database)
-	{
-		std::cout << "No database is open";
-		return;
-	}
+	if (!validateDatabase()) return;
 
 	const std::string table = args[0];
 	const std::string column = args[1];

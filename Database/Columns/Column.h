@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "../Table/Table.h"
+class Table;
 
 enum class ColumnType : int
 {
@@ -22,6 +22,7 @@ public:
 	virtual std::string getType() const = 0;
 	virtual void resize(size_t newSize) = 0;
 	virtual bool matchingValues(size_t index, const std::string& value) const = 0;
+	virtual bool strictMatch(size_t index, const std::string& value) const;
 	virtual void updateValue(size_t index, const std::string& newValue) = 0;
 	virtual void printValueAt(size_t index) const = 0;
 	virtual void printValueAt(size_t index, std::ofstream& ofs) const = 0;

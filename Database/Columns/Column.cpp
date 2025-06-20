@@ -1,5 +1,7 @@
 #include "Column.h"
 #include "../Utils/PrintUtils.h"
+#include "../Utils/StringUtils.h"
+#include "../Table/Table.h"
 
 size_t Column::getSize() const
 {
@@ -18,7 +20,7 @@ void Column::saveNameAndSize(std::ostream& ofs) const
 
 void Column::saveNullFlags(std::ostream& ofs) const
 {
-	for (size_t i = 0; i < getSize(); ++i)
+	for (size_t i = 0; i < getSize(); i++)
 	{
 		bool isNull = isNULL[i];
 		ofs.write(reinterpret_cast<const char*>(&isNull), sizeof(bool));
@@ -42,7 +44,7 @@ void Column::loadNameAndSize(std::istream& ifs)
 
 void Column::loadNullFlags(std::istream& ifs)
 {
-	for (size_t i = 0; i < getSize(); ++i)
+	for (size_t i = 0; i < getSize(); i++)
 	{
 		bool flag;
 		ifs.read(reinterpret_cast<char*>(&flag), sizeof(bool));
@@ -52,12 +54,12 @@ void Column::loadNullFlags(std::istream& ifs)
 
 bool Column::isStringNull(const std::string& str) const
 {
-	return str == "NULL";
+	return str == "null";
 }
 
 bool Column::updateIfNull(size_t index, const std::string& newValue)
 {
-	if (isStringNull(newValue))
+	if (isStringNull(toLowerString(newValue)))
 	{
 		setNull(index);
 		return true;
@@ -68,4 +70,9 @@ bool Column::updateIfNull(size_t index, const std::string& newValue)
 bool Column::isCellNull(size_t index) const
 {
 	return isNULL[index];
+}
+
+bool Column::strictMatch(size_t index, const std::string& value) const
+{
+	return matchingValues(index, value);
 }

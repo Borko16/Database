@@ -1,5 +1,5 @@
 #include "CreateDBCommand.h"
-#include <iostream>
+
 
 CreateDBCommand::CreateDBCommand(Database*& database, bool& hasUnsavedChanges,const std::vector<std::string>& args)
 	: BaseCommand(database, args, 1), hasUnsavedChanges(hasUnsavedChanges)

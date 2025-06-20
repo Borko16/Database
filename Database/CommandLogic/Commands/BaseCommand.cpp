@@ -21,7 +21,7 @@ bool BaseCommand::validateDatabase() const
 {
 	if (!database)
 	{
-		printValue("No database is open\n");
+		printMessage("No database is open\n");
 		return false;
 	}
 	return true;

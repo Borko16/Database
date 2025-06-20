@@ -1,13 +1,11 @@
 #include "Table.h"
-#include <stdexcept>
-#include "../Columns/Column.h"
 #include "../Columns/IntColumn.h"
 #include "../Columns/StringColumn.h"
 #include "../Columns/DoubleColumn.h"
 #include "../Columns/DateColumn.h"
 #include "../Utils/ErrorUtils.h"
 #include "../Utils/PrintUtils.h"
-#include <fstream>
+#include "../Utils/StringUtils.h"
 
 Table::Table(const std::string& name)
 	: name(name)
@@ -18,7 +16,7 @@ Table::Table(const Table& other)
 	: name(other.name)
 {
 	columns.reserve(other.getColumnsCount());
-	for (size_t i = 0; i < getColumnsCount(); ++i)
+	for (size_t i = 0; i < getColumnsCount(); i++)
 	{
 		columns.push_back(other.columns[i]->clone());
 	}
@@ -33,21 +31,21 @@ Table& Table::operator=(const Table& other)
 
 		try
 		{
-			for (size_t i = 0; i < other.getColumnsCount(); ++i)
+			for (size_t i = 0; i < other.getColumnsCount(); i++)
 			{
 				newColumns.push_back(other.columns[i]->clone());
 			}
 		}
 		catch (...)
 		{
-			for (size_t j = 0; j < newColumns.size(); ++j)
+			for (size_t j = 0; j < newColumns.size(); j++)
 			{
 				delete newColumns[j];
 			}
 			throw;
 		}
 
-		for (size_t i = 0; i < columns.size(); ++i)
+		for (size_t i = 0; i < columns.size(); i++)
 		{
 			delete columns[i];
 		}
@@ -61,7 +59,7 @@ Table& Table::operator=(const Table& other)
 
 Table::~Table()
 {
-	for (size_t i = 0; i < columns.size(); ++i)
+	for (size_t i = 0; i < columns.size(); i++)
 	{
 		delete columns[i];
 	}
@@ -82,7 +80,7 @@ bool Table::addColumn(const std::string& column, const std::string& type)
 	size_t index = findColumnIndex(column);
 	if (index != getColumnsCount())
 	{
-		printValue("Column with this name already exists.\n");
+		printMessage("Column with this name already exists.\n");
 		return false;
 	}
 
@@ -121,7 +119,7 @@ bool Table::deleteRows(const std::string& column, const std::string& value)
 	int removedCount = 0;
 	for (int i = getColumnsCount() - 1; i >= 0; i--)
 	{
-		if (columns[index]->matchingValues(i, value))
+		if (columns[index]->strictMatch(i, value))
 		{
 			removeRow(i);
 			removedCount++;
@@ -136,7 +134,7 @@ void Table::describe() const
 {
 	if (!ensureColumnsExist()) return;
 
-	for (size_t i = 0; i < getRowSize(); ++i)
+	for (size_t i = 0; i < getRowSize(); i++)
 	{
 		printColumnNameAndType(columns[i]->getName(), columns[i]->getType());
 	}
@@ -147,7 +145,7 @@ void Table::exportTable(std::ofstream& ofs) const
 	if (!ensureColumnsExist()) return;
 
 	printColumnNames(ofs);
-	for (size_t i = 0; i < getRowSize(); ++i)
+	for (size_t i = 0; i < getRowSize(); i++)
 	{
 		printRow(i, ofs);
 	}
@@ -173,7 +171,7 @@ bool Table::insert(const std::vector<std::string>& values)
 	}
 	catch (...)
 	{
-		for (size_t j = 0; j < i; ++j)
+		for (size_t j = 0; j < i; j++)
 		{
 			columns[j]->resize(getColumnsCount() - 1);
 		}
@@ -187,8 +185,10 @@ bool Table::insert(const std::vector<std::string>& values)
 
 bool Table::modify(const std::string& column, const std::string& type)
 {
-	if (!ensureColumnsExist()) return false;
-
+	if (!ensureColumnsExist())
+	{
+		return false;
+	}
 	size_t index = findColumnIndex(column);
 	if (index == getRowSize())
 	{
@@ -206,7 +206,7 @@ bool Table::modify(const std::string& column, const std::string& type)
 		size_t success = 0;
 		size_t fail = 0;
 		std::vector<size_t> failed;
-		for (size_t i = 0; i < oldCol->getSize(); ++i)
+		for (size_t i = 0; i < oldCol->getSize(); i++)
 		{
 			if (newCol->modify(*oldCol, i))
 			{
@@ -240,7 +240,7 @@ void Table::print(size_t rowsPerPage) const
 	if (rowsPerPage == 0)
 	{
 		printColumnNames();
-		for (size_t i = 0; i < getColumnsCount(); ++i)
+		for (size_t i = 0; i < getColumnsCount(); i++)
 		{
 			printRow(i);
 		}
@@ -249,7 +249,7 @@ void Table::print(size_t rowsPerPage) const
 	{
 		if (getRowSize() == 0)
 		{
-			printValue("Empty\n");
+			printMessage("Empty\n");
 			return;
 		}
 
@@ -263,12 +263,12 @@ void Table::print(size_t rowsPerPage) const
 			size_t end = (start + rowsPerPage < getColumnsCount()) ? start + rowsPerPage : getColumnsCount();
 
 			printColumnNames();
-			for (size_t i = start; i < end; ++i)
+			for (size_t i = start; i < end; i++)
 			{
 				printRow(i);
 			}
 			printPage(currentPage);
-			printValue("Enter command: ");
+			printMessage("Enter command: ");
 			std::getline(std::cin, command);
 			printPaginationLogic(currentPage, totalPages, command);
 		}
@@ -293,41 +293,41 @@ void Table::select(const std::string& column, const std::string& value) const
 			printRow(i);
 		}
 	}
-	printValue("\n");
+	printMessage("\n");
 }
 
 void Table::printRow(size_t index) const
 {
-	for (size_t j = 0; j < getRowSize(); ++j)
+	for (size_t j = 0; j < getRowSize(); j++)
 	{
 		columns[j]->printValueAt(index);
-		printValue("\t");
+		printMessage("\t");
 	}
-	printValue("\n");
+	printMessage("\n");
 }
 
 void Table::printRow(size_t index, std::ofstream& ofs) const
 {
-	for (size_t j = 0; j < getRowSize(); ++j)
+	for (size_t j = 0; j < getRowSize(); j++)
 	{
 		columns[j]->printValueAt(index, ofs);
-		printValue("\t", ofs);
+		printMessage("\t", ofs);
 	}
-	printValue("\n", ofs);
+	printMessage("\n", ofs);
 }
 
 void Table::printFailedCell(const std::vector<size_t>& failed) const
 {
-	printValue("Failed indices: ");
+	printMessage("Failed indices: ");
 	for (size_t i = 0; i < failed.size(); i++)
 	{
-		printValue((int)failed[i]);
+		printNumber(failed[i]);
 		if (i < failed.size() - 1)
 		{
-			printValue(", ");
+			printMessage(", ");
 		}
 	}
-	printValue("\n");
+	printMessage("\n");
 }
 
 void Table::printPaginationLogic(size_t& currentPage, size_t totalPages, const std::string& command) const
@@ -337,22 +337,22 @@ void Table::printPaginationLogic(size_t& currentPage, size_t totalPages, const s
 	else if (command == "next")
 	{
 		if (currentPage + 1 < totalPages) ++currentPage;
-		else printValue("This is the last page.\n");
+		else printMessage("This is the last page.\n");
 
 	}
 	else if (command == "previous")
 	{
 		if (currentPage > 0) --currentPage;
-		else printValue("This is the first page.\n");
+		else printMessage("This is the first page.\n");
 	}
 	else if (command != "exit")
 	{
-		printValue("Unknown command. Valid commands are:\n");
-		printValue("  - start\n");
-		printValue("  - end\n");
-		printValue("  - next\n");
-		printValue("  - previous\n");
-		printValue("  - exit\n");
+		printMessage("Unknown command. Valid commands are:\n");
+		printMessage("  - start\n");
+		printMessage("  - end\n");
+		printMessage("  - next\n");
+		printMessage("  - previous\n");
+		printMessage("  - exit\n");
 	}
 }
 
@@ -360,20 +360,20 @@ void Table::printColumnNames() const
 {
 	for (size_t i = 0; i < getRowSize(); i++)
 	{
-		printValue(columns[i]->getName());
-		printValue("\t");
+		printMessage(columns[i]->getName());
+		printMessage("\t");
 	}
-	printValue("\n");
+	printMessage("\n");
 }
 
 void Table::printColumnNames(std::ofstream& ofs) const
 {
 	for (size_t i = 0; i < getRowSize(); i++)
 	{
-		printValue(columns[i]->getName(), ofs);
-		printValue("\t", ofs);
+		printMessage(columns[i]->getName(), ofs);
+		printMessage("\t", ofs);
 	}
-	printValue("\n", ofs);
+	printMessage("\n", ofs);
 }
 
 bool Table::update(const std::string& column, const std::string& value, const std::string& targetColumn, const std::string& newValue)
@@ -382,6 +382,7 @@ bool Table::update(const std::string& column, const std::string& value, const st
 	{
 		return false;
 	}
+
 	size_t index = findColumnIndex(column);
 	size_t targetIndex = findColumnIndex(targetColumn);
 	if (index == getRowSize() || targetIndex == getRowSize())
@@ -426,7 +427,7 @@ void Table::saveToFile(std::ofstream& ofs) const
 	size_t columnCount = columns.size();
 	ofs.write(reinterpret_cast<const char*>(&columnCount), sizeof(size_t));
 
-	for (size_t i = 0; i < columns.size(); ++i)
+	for (size_t i = 0; i < columns.size(); i++)
 	{
 		columns[i]->saveToFile(ofs);
 	}
@@ -444,7 +445,7 @@ void Table::loadFromFile(std::ifstream& ifs)
 	size_t columnCount = 0;
 	ifs.read(reinterpret_cast<char*>(&columnCount), sizeof(size_t));
 
-	for (size_t i = 0; i < columnCount; ++i)
+	for (size_t i = 0; i < columnCount; i++)
 	{
 		int typeInt = -1;
 		ifs.read(reinterpret_cast<char*>(&typeInt), sizeof(int));
@@ -516,7 +517,7 @@ size_t Table::findColumnIndex(const std::string& column) const
 {
 	for (size_t i = 0; i < getRowSize(); i++)
 	{
-		if (columns[i]->getName() == column)
+		if (compareInsensitive(columns[i]->getName(), column))
 		{
 			return i;
 		}
